@@ -14,3 +14,6 @@ class example extends uvm_example_something;
 
 	// Your code here
 endclass
+
+
+//:%s/example/newname
