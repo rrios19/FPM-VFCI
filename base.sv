@@ -8,8 +8,8 @@
 class example extends uvm_example_something;
 	`uvm_object_utils(example); // Register at the factory
 
-	function new(string name = "example"); // Builder
-		super.new(name);
+	function new(string name = "example", uvm_component parent=null); // Builder
+		super.new(name,parent);
 	endfunction
 
 	// Your code here
