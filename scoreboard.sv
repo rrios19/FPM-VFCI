@@ -5,7 +5,7 @@
 // Irene Prieto 
 // Ronald Rios
 
-class scoreboard extends uvm_example_something;
+class scoreboard extends uvm_scoreboard;
 	`uvm_object_utils(scoreboard); // Register at the factory
 
 	function new(string name = "scoreboard", uvm_component parent=null); // Builder
