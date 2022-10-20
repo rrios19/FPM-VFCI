@@ -6,7 +6,7 @@
 // Ronald Rios
 
 class agent extends uvm_agent;
-	`uvm_object_utils(agent); // Register at the factory
+	`uvm_component_utils(agent); // Register at the factory
 
 	function new(string name = "agent", uvm_component parent=null); // Builder
 		super.new(name,parent);
@@ -23,7 +23,7 @@ class agent extends uvm_agent;
 		mnt_inst = monitor::type_id::create("mnt_inst",this);
 	endfunction
 	
-	virtual function connect_phase(uvm_phase phase);
+	virtual function void connect_phase(uvm_phase phase);
 		super.connect_phase(phase);
 		drv_inst.seq_item_port.connect(seq_inst.seq_item_export);
 	endfunction

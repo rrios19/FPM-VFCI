@@ -6,7 +6,7 @@
 // Ronald Rios
 
 class driver extends uvm_driver #(item);
-	`uvm_object_utils(driver); // Register at the factory
+	`uvm_component_utils(driver); // Register at the factory
 
 	function new(string name = "driver", uvm_component parent=null); // Builder
 		super.new(name,parent);

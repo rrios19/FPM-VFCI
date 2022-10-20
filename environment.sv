@@ -6,7 +6,7 @@
 // Ronald Rios
 
 class environment extends uvm_env;
-	`uvm_object_utils(environment); // Register at the factory
+	`uvm_component_utils(environment); // Register at the factory
 
 	function new(string name = "environment", uvm_component parent=null); // Builder
 		super.new(name,parent);

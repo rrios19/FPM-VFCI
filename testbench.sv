@@ -24,7 +24,7 @@ module tb;
 	always #10 clk =~ clk;
 	dut_if _if(clk);
 	
-	top  u1(.clk(clk),
+	top  u0(.clk(clk),
 		.r_mode(_if.r_mode),
 		.fp_X(_if.fp_X),
 		.fp_Y(_if.fp_Y),
@@ -35,7 +35,7 @@ module tb;
 	initial begin
 		clk <= 0;
 		uvm_config_db#(virtual dut_if)::set(null,"uvm_test_top","dut_vif",_if);
-		run_test("test_name");
+		run_test("test_1");
 	end
 	
 endmodule

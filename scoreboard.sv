@@ -6,7 +6,7 @@
 // Ronald Rios
 
 class scoreboard extends uvm_scoreboard;
-	`uvm_object_utils(scoreboard); // Register at the factory
+	`uvm_component_utils(scoreboard); // Register at the factory
 
 	function new(string name = "scoreboard", uvm_component parent=null); // Builder
 		super.new(name,parent);
@@ -20,6 +20,7 @@ class scoreboard extends uvm_scoreboard;
 	
 	virtual function void build_phase(uvm_phase phase);
 		super.build_phase(phase);
+		m_analysis_imp = new("m_analysis_imp",this);
 	endfunction
 
 	virtual function write(item itm);

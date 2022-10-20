@@ -6,7 +6,7 @@
 // Ronald Rios
 
 class monitor extends uvm_monitor;
-	`uvm_object_utils(monitor); // Register at the factory
+	`uvm_component_utils(monitor); // Register at the factory
 
 	function new(string name = "monitor", uvm_component parent=null); // Builder
 		super.new(name,parent);
