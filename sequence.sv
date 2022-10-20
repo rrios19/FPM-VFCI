@@ -13,7 +13,7 @@ class mysequence extends uvm_sequence;
 	endfunction
 
 	rand int num; 					  // Number of items
-	constraint cnstr_num {soft num inside {[10:20]};} // Constraint for the number of items
+	constraint cnstr_num {soft num inside {[1:10]};}  // Constraint for the number of items
 
 	virtual task body();
 		for(int i=0; i<num; i++)begin

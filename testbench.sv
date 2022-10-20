@@ -1,3 +1,11 @@
+// Tecnologico de Costa Rica
+// Verificacion funcional de circuitos integrados
+// S2 2022
+// Project 2: Floating point multipliers
+// Irene Prieto 
+// Ronald Rios
+
+//`timescale 1ns/1ps
 `include "uvm_macros.svh"
 import uvm_pkg::*;
 `include "dut.sv"
@@ -11,8 +19,8 @@ import uvm_pkg::*;
 `include "environment.sv"
 `include "test.sv"
 
-module tb
-	reg clk
+module tb;
+	reg clk;
 	always #10 clk =~ clk;
 	dut_if _if(clk);
 	
