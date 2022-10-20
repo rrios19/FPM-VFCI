@@ -1,4 +1,4 @@
-`timescale 1ns / 1ps
+//`timescale 1ns / 1ps 		//Error: This line shouldn't be here
 
 module half(A, B, S, Cout);
   
