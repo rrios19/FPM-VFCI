@@ -16,7 +16,7 @@ class agent extends uvm_agent;
 	monitor 	        mnt_inst;	// Monitor instance
 	uvm_sequencer #(item) 	seq_inst;	// Sequencer instance
 	
-	virtual function void build_phase(uvm_phase phase)
+	virtual function void build_phase(uvm_phase phase);
 		super.build_phase(phase);
 		seq_inst = uvm_sequencer#(item)::type_id::create("seq_inst",this);
 		drv_inst = driver::type_id::create("drv_inst",this);

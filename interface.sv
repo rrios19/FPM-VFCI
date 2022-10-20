@@ -13,7 +13,7 @@ interface dut_if(input bit clk);
 
 	clocking cb @(posedge clk);
 		default input #1step output #3ns;
-		input  ovrf
+		input  ovrf;
 		input  udrf;
 		input  fp_Z;
 		output fp_X;

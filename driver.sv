@@ -28,6 +28,7 @@ class driver extends uvm_driver #(item);
 			seq_item_port.get_next_item(itm); // It gets the item from the sequence port
 			driver_item(itm); 	          // It calls the task to process the item
 			seq_item_port.item_done();        // It allows the port to get a new item when the item is done
+		end
 	endtask
 
 	virtual task driver_item(item itm);

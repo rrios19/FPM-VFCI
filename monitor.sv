@@ -26,7 +26,7 @@ class monitor extends uvm_monitor;
 		super.run_phase(phase);
 		forever @(vif.cb)begin // Forever on a positive edge of the "cb"  clock
 			item itm = item::type_id::create("itm"); // New pointer itm of type item
-			itm.r_mode = vif.r_mode   // Gets the value "r" from the interface
+			itm.r_mode = vif.r_mode;  // Gets the value "r" from the interface
 			itm.fp_X   = vif.fp_X;    // Gets the value "X" from the interface
 			itm.fp_Y   = vif.fp_Y;    // Gets the value "Y" from the interface
 			itm.fp_Z   = vif.cb.fp_Z; // Gets the value "Z" from the input "Z" of the interface

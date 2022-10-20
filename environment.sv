@@ -5,7 +5,7 @@
 // Irene Prieto 
 // Ronald Rios
 
-class environment extends uvm_environment;
+class environment extends uvm_env;
 	`uvm_object_utils(environment); // Register at the factory
 
 	function new(string name = "environment", uvm_component parent=null); // Builder
@@ -24,4 +24,5 @@ class environment extends uvm_environment;
 	virtual function void connect_phase(uvm_phase phase);
 		super.connect_phase(phase);
 		agn_inst.mnt_inst.mon_analysis_port.connect(scb_inst.m_analysis_imp);
+	endfunction
 endclass
