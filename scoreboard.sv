@@ -27,17 +27,17 @@ class scoreboard extends uvm_scoreboard;
 
 	virtual function write(item itm);
 		// For the sign:
-		x_sgn = (itm.fp_X & 0x80000000) >> 31; // Gets the X sign
-		y_sgn = (itm.fp_Y & 0x80000000) >> 31; // Gets the Y sign
+		x_sgn = (itm.fp_X & 32'h80000000) >> 31; // Gets the X sign
+		y_sgn = (itm.fp_Y & 32'h80000000) >> 31; // Gets the Y sign
 		z_sgn = x_sgn ^ y_sgn; // XOR for the output sign
 		// For the exponent:	
-		x_exp = (itm.fp_X & 0x7F800000) >> 23; // Gets the X exponent
-		y_exp = (itm.fp_Y & 0x7F800000) >> 23; // Gets the Y exponent
+		x_exp = (itm.fp_X & 32'h7F800000) >> 23; // Gets the X exponent
+		y_exp = (itm.fp_Y & 32'h7F800000) >> 23; // Gets the Y exponent
 		z_exp = x_exp + y_exp; // OR for the output exponent
 		// For the fraction	
-		x_frc = (itm.fp_X & 0x007FFFFF); // Gets the X exponent
-		y_frc = (itm.fp_Y & 0x007FFFFF); // Gets the X exponent
-		z_frc = (x_frc * y_frc) & 0xFFFFFE00 >> 23;
+		x_frc = (itm.fp_X & 32'h007FFFFF); // Gets the X exponent
+		y_frc = (itm.fp_Y & 32'h007FFFFF); // Gets the X exponent
+		z_frc = (x_frc * y_frc) & 32'hFFFFFE00 >> 23;
 
 		merge_out = z_sgn | z_exp | z_frc ;
 
