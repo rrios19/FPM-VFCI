@@ -13,8 +13,10 @@ class scoreboard extends uvm_scoreboard;
 	endfunction
 	
 	bit [31:0] fp_x, fp_y, aux_out, exp_out;
-	bit sig_out; // Output sign
-	bit [7:0] exp_X, exp_Y, exp_Z; // Exponent
+	bit 		x_sgn, y_sgn, z_sgn; // Signs
+	bit [7:0]	x_exp, y_exp, z_exp; // Exponents
+	bit [22:0]	x_frc, y_frc, z_frc; // Fractions 
+	bit [31:0]	merge_out;
 
 	uvm_analysis_imp #(item,scoreboard) m_analysis_imp;
 	
@@ -24,11 +26,27 @@ class scoreboard extends uvm_scoreboard;
 	endfunction
 
 	virtual function write(item itm);
-		sig_out = itm.fp_X[31]^itm.fp_Y[31]; // XOR fot the output sign
-		
+		// For the sign:
+		x_sgn = (itm.fp_X & 0x80000000) >> 31; // Gets the X sign
+		y_sgn = (itm.fp_Y & 0x80000000) >> 31; // Gets the Y sign
+		z_sgn = x_sgn ^ y_sgn; // XOR for the output sign
+		// For the exponent:	
+		x_exp = (itm.fp_X & 0x7F800000) >> 23; // Gets the X exponent
+		y_exp = (itm.fp_Y & 0x7F800000) >> 23; // Gets the Y exponent
+		z_exp = x_exp + y_exp; // OR for the output exponent
+		// For the fraction	
+		x_frc = (itm.fp_X & 0x007FFFFF); // Gets the X exponent
+		y_frc = (itm.fp_Y & 0x007FFFFF); // Gets the X exponent
+		z_frc = (x_frc * y_frc) & 0xFFFFFE00 >> 23;
 
-		//fp_x = itm.fp_X;
-		//fp_y = itm.fp_Y;
-		//aux_out = fp_x*fp_y;
+		merge_out = z_sgn | z_exp | z_frc ;
+
+		if (merge_out == itm.fp_Z) begin
+			`uvm_info("Scoreboard", $sformatf("Pass, dut_out=%0h, exp_out=%0h",
+			itm.fp_Z, merge_out),UVM_HIGH)
+		end else begin
+			`uvm_error("Scoreboard", $sformatf("Error, dut_out=%0h, exp_out=%0h",
+			itm.fp_Z, merge_out))
+		end
 	endfunction
 endclass
