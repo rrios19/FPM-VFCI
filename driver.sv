@@ -27,6 +27,7 @@ class driver extends uvm_driver #(item);
 			`uvm_info("Driver",$sformatf("Wait for item from sequence"),UVM_HIGH)
 			seq_item_port.get_next_item(itm); // It gets the item from the sequence port
 			driver_item(itm); 	          // It calls the task to process the item
+			`uvm_info("Driver",$sformatf("Item %s",itm.print_item_in()),UVM_HIGH)
 			seq_item_port.item_done();        // It allows the port to get a new item when the item is done
 		end
 	endtask

@@ -33,7 +33,7 @@ class monitor extends uvm_monitor;
 			itm.ovrf   = vif.cb.ovrf; // Gets the value "ovrf" from the input "ovrf" of the interface
 			itm.udrf   = vif.cb.udrf; // Gets the value "udrf" from the input "udrf" of the interface				
 			mon_analysis_port.write(itm);
-			`uvm_info("Monitor",$sformatf("Item %s",itm.convert2str()),UVM_HIGH)
+			`uvm_info("Monitor",$sformatf("Item %s",itm.print_item_out()),UVM_HIGH)
 		end
 	endtask
 endclass
