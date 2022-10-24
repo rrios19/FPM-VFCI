@@ -12,9 +12,9 @@ class agent extends uvm_agent;
 		super.new(name,parent);
 	endfunction
 
+	uvm_sequencer #(item) 	seq_inst;	// Sequencer instance
 	driver 			drv_inst;	// Driver instance
 	monitor 	        mnt_inst;	// Monitor instance
-	uvm_sequencer #(item) 	seq_inst;	// Sequencer instance
 	
 	virtual function void build_phase(uvm_phase phase);
 		super.build_phase(phase);

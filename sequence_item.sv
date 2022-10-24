@@ -30,5 +30,5 @@ class item extends uvm_sequence_item;
 	endfunction
 
 	// Constraints
-	constraint cnstr_rounding {r_mode < 3'b001;}
+	constraint c_rounding {r_mode < 3'b101;}
 endclass

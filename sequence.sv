@@ -12,15 +12,14 @@ class mysequence extends uvm_sequence;
 		super.new(name);
 	endfunction
 
-	//rand int num; 					  // Number of items
-	//constraint cnstr_num {soft num inside {[1:10]};}  // Constraint for the number of items
+	rand int num; 					  // Number of items
+	constraint cnstr_num {soft num inside {[1:10]};}  // Constraint for the number of items
 	
-	int num = 1;
 
 	virtual task body();
 		for(int i=0; i<num; i++)begin
 			item myitem = item::type_id::create("myitem");
-			myitem.cnstr_rounding.constraint_mode(1);
+			myitem.c_rounding.constraint_mode(1);
 			start_item(myitem);
 			myitem.randomize();
 			`uvm_info("Sequence",$sformatf("New item: %s",myitem.print_item_in()),UVM_HIGH);
