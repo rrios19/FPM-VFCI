@@ -34,9 +34,9 @@ class driver extends uvm_driver #(item);
 
 	virtual task driver_item(item itm);
 		@(vif.cb);begin // On a positive edge of the "cb"  clock
-			vif.cb.fp_X   <= itm.fp_X; // Puts the value "X" of the item, in the out "X" of the interface
-			vif.cb.fp_Y   <= itm.fp_Y; // Puts the value "Y" of the item, in the out "Y" of the interface
-			vif.cb.r_mode <= itm.fp_X; // Puts the value "r" of the item, in the out "r" of the interface
+			vif.cb.fp_X   <= itm.fp_X; 	// Puts the value "X" of the item, in the out "X" of the interface
+			vif.cb.fp_Y   <= itm.fp_Y;	// Puts the value "Y" of the item, in the out "Y" of the interface
+			vif.cb.r_mode <= itm.r_mode; 	// Puts the value "r" of the item, in the out "r" of the interface
 		end
 	endtask
 endclass
