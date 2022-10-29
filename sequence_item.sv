@@ -12,8 +12,8 @@ class item extends uvm_sequence_item;
 		super.new(name);
 	endfunction
 
-	bit [31:0]fp_X = 32'h732B7DE6;  // Random X input
-	bit [31:0]fp_Y = 32'h47A4E38F;  // Random Y input
+	rand bit [31:0]fp_X;  // Random X input
+	rand bit [31:0]fp_Y;	      // Random Y input
 	bit      [31:0]fp_Z;  // Output
 	rand bit [2:0]r_mode; // Rounding mode
 	bit      ovrf;	      // Overflow flag
