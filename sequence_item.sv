@@ -30,5 +30,9 @@ class item extends uvm_sequence_item;
 	endfunction
 
 	// Constraints
-	constraint c_rounding {r_mode < 3'b101;}
+	constraint c_rounding {type inside{3'b000,3'b001,3'b010,3'b011,3'b100};}
+
+	constraint c_overflow {}
+
+	constraint c_underflow {}
 endclass
