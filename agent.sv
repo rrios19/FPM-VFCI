@@ -13,7 +13,7 @@ class agent extends uvm_agent;
 	endfunction
 
 	uvm_sequencer #(item) 	seq_inst;	// Sequencer instance
-	driver 			drv_inst;	// Driver instance
+	driver	      	 	drv_inst;	// Driver instance
 	monitor 	        mnt_inst;	// Monitor instance
 	
 	virtual function void build_phase(uvm_phase phase);

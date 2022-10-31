@@ -22,7 +22,7 @@ class mysequence extends uvm_sequence;
 			myitem.c_rounding.constraint_mode(1);
 			start_item(myitem);
 			myitem.randomize();
-			`uvm_info("Sequence",$sformatf("New item: %s",myitem.print_item_in()),UVM_HIGH);
+			`uvm_info("Sequence",$sformatf("New item: %s",myitem.print_item_in()),UVM_MEDIUM);
 			finish_item(myitem);
 		end	
 		`uvm_info("Sequence",$sformatf("Creation of %d items",num),UVM_LOW);
