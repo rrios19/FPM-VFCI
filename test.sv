@@ -54,7 +54,6 @@ class test_1 extends test;
 	virtual task run_phase(uvm_phase phase);
 		phase.raise_objection(this);
 		seq.start(env_inst.agn_inst.seq_inst);
-		#50
 		phase.drop_objection(this);
 	endtask
 endclass

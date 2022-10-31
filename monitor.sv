@@ -24,16 +24,16 @@ class monitor extends uvm_monitor;
 
 	virtual task run_phase(uvm_phase phase);
 		super.run_phase(phase);
-		forever @(vif.cb)begin // Forever on a positive edge of the "cb"  clock
+		 forever @(negedge vif.clk)begin // Forever on a positive edge of the "cb"  clock
 			item itm = item::type_id::create("itm"); // New pointer itm of type item
 			itm.r_mode = vif.r_mode;  // Gets the value "r" from the interface
 			itm.fp_X   = vif.fp_X;    // Gets the value "X" from the interface
 			itm.fp_Y   = vif.fp_Y;    // Gets the value "Y" from the interface
-			itm.fp_Z   = vif.cb.fp_Z; // Gets the value "Z" from the input "Z" of the interface
-			itm.ovrf   = vif.cb.ovrf; // Gets the value "ovrf" from the input "ovrf" of the interface
-			itm.udrf   = vif.cb.udrf; // Gets the value "udrf" from the input "udrf" of the interface				
+			itm.fp_Z   = vif.fp_Z; // Gets the value "Z" from the input "Z" of the interface
+			itm.ovrf   = vif.ovrf; // Gets the value "ovrf" from the input "ovrf" of the interface
+			itm.udrf   = vif.udrf; // Gets the value "udrf" from the input "udrf" of the interface				
+			`uvm_info("Monitor",$sformatf("Item %s",itm.print_item_out()),UVM_MEDIUM)
 			mon_analysis_port.write(itm);
-			`uvm_info("Monitor",$sformatf("Item %s",itm.print_item_out()),UVM_HIGH)
 		end
 	endtask
 endclass
