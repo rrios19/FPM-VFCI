@@ -26,7 +26,7 @@ class test extends uvm_test;
 		uvm_config_db#(virtual dut_if)::set(this,"env_inst.agn_inst.*","dut_vif",vif);
 		
 		seq = mysequence::type_id::create("seq");
-		seq.randomize() with {num inside{[1:10]};};
+		seq.randomize() with {num inside{[100:200]};};
 	endfunction
 
 	virtual task run_phase(uvm_phase phase);
@@ -48,7 +48,7 @@ class test_1 extends test;
 	virtual function void build_phase(uvm_phase phase);
 		super.build_phase(phase);
 		seq = mysequence::type_id::create("seq");
-		seq.randomize() with {num inside{[1:10]};};
+		seq.randomize() with {num inside{[100:200]};};
 	endfunction
 
 	virtual task run_phase(uvm_phase phase);

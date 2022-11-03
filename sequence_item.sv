@@ -28,9 +28,15 @@ class item extends uvm_sequence_item;
 		return $sformatf("fp_X=%0h, fp_Y=%0h, fp_Z=%0h, r_mode=%0d, ovrf=%0b, udrf=%0b",
 		fp_X,fp_Y,fp_Z,r_mode,ovrf,udrf);
 	endfunction
-
+	
+	// *************************************************************************************
 	// Constraints
+	
 	constraint c_rounding {r_mode inside{3'b000,3'b001,3'b010,3'b011,3'b100};}
+	
+	// Test underflow
+	constraint c_underflow {fp_X[30:23]  + fp_Y[30:23] <= 126;}
+	
 
 	//constraint c_overflow {}
 
