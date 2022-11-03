@@ -13,7 +13,7 @@ class scoreboard extends uvm_scoreboard;
 	endfunction
 	
 	bit 		x_sgn, y_sgn, z_sgn;  // Signs
-	bit [8:0]	x_exp, y_exp, z_exp;  // Exponents
+	bit [7:0]	x_exp, y_exp, z_exp;  // Exponents
 	bit [22:0]	x_frc, y_frc, z_mnt;  // Fractions 
 	bit [31:0]	merge_out;	      // Merge out equal to the DUT out
 	bit [47:0]	z_frc;		      // Fraction with all 48 bits
@@ -22,6 +22,7 @@ class scoreboard extends uvm_scoreboard;
 	bit		round, guard, sticky; // Rounding bits 
 	bit 		norm_n, norm_r, norm; // Normalizer bits
 	bit [7:0]	bias;		      // Bias for the exponent
+	int 		int_exp;
 
 	uvm_analysis_imp #(item,scoreboard) m_analysis_imp;
 	
@@ -88,16 +89,24 @@ class scoreboard extends uvm_scoreboard;
 		// Set exponent:
 		norm = norm_n | norm_r;
 		bias = norm ? 8'h7E : 8'h7F;
-		z_exp = x_exp + y_exp - bias; // OR for the output exponent
-		`uvm_info("Scoreboard",$sformatf("x_exp=%0h, y_exp=%0h, z_exp=%0h"
-		,x_exp,y_exp,z_exp),UVM_HIGH);
+		int_exp = x_exp + y_exp - bias; // For the flags
+		z_exp   = x_exp + y_exp - bias; // Output exponent
+		`uvm_info("Scoreboard",$sformatf("x_exp=%0d, y_exp=%0d, z_exp=%0d"
+		,x_exp,y_exp,int_exp),UVM_HIGH);
 		// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		// Set fraction:
 		`uvm_info("Scoreboard",$sformatf("x_frc=%0h, y_frc=%0h, z_frc=%0h",
 		x_frc,y_frc,z_mnt),UVM_HIGH);
 		// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-		//if ((z_exp >> 8) == 1) z_exp = 8'hFF;
+		
+		if (int_exp > 255)begin // Overflow
+			z_exp = 8'hFF;
+			z_mnt = 23'h000000;
+		end
+		if (int_exp < 0)begin // Underflow
+			z_exp = 8'h00;
+			z_mnt = 8'h00;
+		end
 		
 		merge_out = (z_sgn << 31) | (z_exp << 23) | (z_mnt) ;
 
@@ -105,8 +114,8 @@ class scoreboard extends uvm_scoreboard;
 			`uvm_info("Scoreboard", $sformatf("PASS, dut_out=%0h, exp_out=%0h",
 			itm.fp_Z, merge_out),UVM_MEDIUM)
 		end else begin
-			`uvm_error("Scoreboard", $sformatf("ERROR, dut_out=%0h, exp_out=%0h",
-			itm.fp_Z, merge_out))
+			`uvm_error("Scoreboard", $sformatf("ERROR, dut_out=%0h, exp_out=%0h, z_exp=%0h",
+			itm.fp_Z, merge_out,z_exp))
 		end
 	endfunction
 endclass
