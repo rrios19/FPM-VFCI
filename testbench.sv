@@ -19,7 +19,8 @@ import uvm_pkg::*;
 `include "environment.sv"
 `include "test.sv"
 
-module tb;
+module tb;	
+	import "DPI-C" context function int report();
 	reg clk;
 	always #10 clk =~ clk;
 	dut_if _if(clk);
@@ -30,12 +31,12 @@ module tb;
 		.fp_Y(_if.fp_Y),
 		.fp_Z(_if.fp_Z),
 		.ovrf(_if.ovrf),
-		.udrf(udrf));
+		.udrf(_if.udrf));
 
 	initial begin
 		clk <= 0;
 		uvm_config_db#(virtual dut_if)::set(null,"uvm_test_top","dut_vif",_if);
-		run_test("test_1");
+		run_test("test_under");
 	end
 	
 endmodule
