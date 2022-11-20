@@ -12,12 +12,12 @@ class item extends uvm_sequence_item;
 		super.new(name);
 	endfunction
 
-	rand bit [31:0]fp_X;  // Random X input
-	rand bit [31:0]fp_Y;  // Random Y input
-	bit      [31:0]fp_Z;  // Output
-	rand bit [2:0]r_mode; // Rounding mode
-	bit      ovrf;	      // Overflow flag
-	bit	 udrf;	      // Underflow flag
+	rand bit  [31:0]fp_X;  // Random X input
+	rand bit  [31:0]fp_Y;  // Random Y input
+	bit       [31:0]fp_Z;  // Output
+	randc bit [2:0]r_mode; // Rounding mode
+	bit       ovrf;	      // Overflow flag
+	bit	  udrf;	      // Underflow flag
 	
 	virtual function string print_item_in(); // Prints the input item
 		return $sformatf("fp_X=%0h, fp_Y=%0h, r_mode=%0d",
@@ -29,16 +29,18 @@ class item extends uvm_sequence_item;
 		fp_X,fp_Y,fp_Z,r_mode,ovrf,udrf);
 	endfunction
 	
-	// *************************************************************************************
-	// Constraints
+	// *************************************Constraints*************************************
 	
+	// Rounding mode	
 	constraint c_rounding {r_mode inside{3'b000,3'b001,3'b010,3'b011,3'b100};}
 	
+	// Test random
+	constraint c_random {fp_X[30:23] + fp_Y[30:23] > 126; fp_X[30:23] + fp_Y[30:23] - 127 < 255;}
+	
+	// Test overflow
+	constraint c_overflow {fp_X[30:23] + fp_Y[30:23] - 126 >= 255;}
+
 	// Test underflow
 	constraint c_underflow {fp_X[30:23]  + fp_Y[30:23] <= 126;}
-	
 
-	//constraint c_overflow {}
-
-	//constraint c_underflow {}
 endclass
