@@ -22,7 +22,16 @@ class scoreboard extends uvm_scoreboard;
 	bit		round, guard, sticky; // Rounding bits 
 	bit 		norm_n, norm_r, norm; // Normalizer bits
 	bit [7:0]	bias;		      // Bias for the exponent
-	int 		int_exp;
+	int 		int_exp;	      // For overflow and underflow check
+	bit 		udr_f, ovr_f;	      // Flags for checking
+	string		str_x;		      // String for fp_X					      		     
+	string		str_y;		      // String for fp_Y
+	string		str_o;		      // String for ovrf
+	string		str_u;		      // String for udrf
+	string		str_r;		      // String for r_mode
+	string		str_z;		      // String for fp_Z
+	string		str_e;		      // String for z_exp
+	string		line;		      // String for the whole line
 
 	uvm_analysis_imp #(item,scoreboard) m_analysis_imp;
 	
@@ -103,9 +112,28 @@ class scoreboard extends uvm_scoreboard;
 			z_exp = 8'hFF;
 			z_mnt = 23'h000000;
 		end
-		if (int_exp < 0)begin // Underflow
+		if (int_exp <= 0)begin // Underflow flag and expected values
 			z_exp = 8'h00;
-			z_mnt = 8'h00;
+			z_mnt = 23'h000000;
+			udr_f = 1;
+		end
+		if (~|x_exp)begin // If X = 0, turn on underflow flow
+			z_exp = 8'h00;
+			z_mnt = 23'h000000;
+			udr_f = 1;
+		end
+		if (~|y_exp)begin // If Y = 0, turn on underflow flag
+			z_exp = 8'h00;
+			z_mnt = 23'h000000;
+			udr_f = 1;
+		end
+		if (&x_exp)begin
+			z_exp = 8'hFF;
+			z_mnt = 23'h000000;
+		end
+		if (&y_exp)begin
+			z_exp = 8'hFF;
+			z_mnt = 23'h000000;
 		end
 		
 		merge_out = (z_sgn << 31) | (z_exp << 23) | (z_mnt) ;
@@ -117,5 +145,20 @@ class scoreboard extends uvm_scoreboard;
 			`uvm_error("Scoreboard", $sformatf("ERROR, dut_out=%0h, exp_out=%0h, z_exp=%0h",
 			itm.fp_Z, merge_out,z_exp))
 		end
+
+		if (itm.udrf ^ udr_f) begin // Check the underflow flag
+			`uvm_error("Scoreboard", $sformatf("udrf=%0d, expected udrf=%0d",itm.udrf,udr_f))
+		end
+		
+		// Report
+		str_x.bintoa(itm.fp_X);		// Get the string of X 
+		str_y.bintoa(itm.fp_Y);		// Get the srring of Y
+		str_r.bintoa(itm.r_mode);	// Get the string of the rounding mode
+		str_o.bintoa(itm.ovrf);		// Get the string of the overflow
+		str_u.bintoa(itm.udrf);		// Get the string of the underflow
+		str_z.bintoa(itm.fp_Z);		// Get the string of Z
+		str_e.bintoa(merge_out);	// Get the string of expected out
+		line = {str_x,",",str_y,",",str_r,",",str_o,",",str_u,",",str_z,",",str_e};
+		$system($sformatf("echo %0s >> report.csv",line));
 	endfunction
 endclass
