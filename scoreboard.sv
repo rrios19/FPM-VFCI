@@ -41,6 +41,8 @@ class scoreboard extends uvm_scoreboard;
 	endfunction
 
 	virtual function write(item itm);
+		ovr_f = 0;
+		udr_f = 0;
 		// For the sign:
 		x_sgn = (itm.fp_X & 32'h80000000) >> 31; // Gets the X sign
 		y_sgn = (itm.fp_Y & 32'h80000000) >> 31; // Gets the Y sign
@@ -108,32 +110,35 @@ class scoreboard extends uvm_scoreboard;
 		x_frc,y_frc,z_mnt),UVM_HIGH);
 		// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		
-		if (int_exp > 255)begin // Overflow
+		if (int_exp >= 255)begin // Overflow flag and expected values
 			z_exp = 8'hFF;
 			z_mnt = 23'h000000;
+			ovr_f = 1;
 		end
 		if (int_exp <= 0)begin // Underflow flag and expected values
 			z_exp = 8'h00;
 			z_mnt = 23'h000000;
 			udr_f = 1;
 		end
-		if (~|x_exp)begin // If X = 0, turn on underflow flow
+		if (~|x_exp)begin // If X == 0, turn on underflow flow
 			z_exp = 8'h00;
 			z_mnt = 23'h000000;
 			udr_f = 1;
 		end
-		if (~|y_exp)begin // If Y = 0, turn on underflow flag
+		if (~|y_exp)begin // If Y == 0, turn on underflow flag
 			z_exp = 8'h00;
 			z_mnt = 23'h000000;
 			udr_f = 1;
 		end
-		if (&x_exp)begin
+		if (&x_exp)begin // If X == inf, turn on overflow flag
 			z_exp = 8'hFF;
 			z_mnt = 23'h000000;
+			ovr_f = 1;
 		end
-		if (&y_exp)begin
+		if (&y_exp)begin // If Y == inf, turn on overflow flag
 			z_exp = 8'hFF;
 			z_mnt = 23'h000000;
+			ovr_f = 1;
 		end
 		
 		merge_out = (z_sgn << 31) | (z_exp << 23) | (z_mnt) ;
@@ -146,9 +151,14 @@ class scoreboard extends uvm_scoreboard;
 			itm.fp_Z, merge_out,z_exp))
 		end
 
-		if (itm.udrf ^ udr_f) begin // Check the underflow flag
-			`uvm_error("Scoreboard", $sformatf("udrf=%0d, expected udrf=%0d",itm.udrf,udr_f))
-		end
+		ovrf_assert:
+		assert (itm.ovrf ~^ ovr_f) // Overflow assert
+		else `uvm_error("Scoreboard",$sformatf("ovrf=%0d, expected ovrf=%0d",itm.ovrf,ovr_f))
+		
+		udrf_assert:
+		assert (itm.udrf ~^ udr_f) // Underflow assert
+		else `uvm_error("Scoreboard",$sformatf("udrf=%0d, expected udrf=%0d",itm.udrf,udr_f))
+	
 		
 		// Report
 		str_x.bintoa(itm.fp_X);		// Get the string of X 
