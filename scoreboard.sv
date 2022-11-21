@@ -23,7 +23,7 @@ class scoreboard extends uvm_scoreboard;
 	bit 		norm_n, norm_r, norm; // Normalizer bits
 	bit [7:0]	bias;		      // Bias for the exponent
 	int 		int_exp;	      // For overflow and underflow check
-	bit 		udr_f, ovr_f;	      // Flags for checking
+	bit 		udr_f, ovr_f, nan_f;  // Flags for checking
 	string		str_x;		      // String for fp_X					      		     
 	string		str_y;		      // String for fp_Y
 	string		str_o;		      // String for ovrf
@@ -43,6 +43,7 @@ class scoreboard extends uvm_scoreboard;
 	virtual function write(item itm);
 		ovr_f = 0;
 		udr_f = 0;
+		nan_f = 0;
 		// For the sign:
 		x_sgn = (itm.fp_X & 32'h80000000) >> 31; // Gets the X sign
 		y_sgn = (itm.fp_Y & 32'h80000000) >> 31; // Gets the Y sign
@@ -109,36 +110,29 @@ class scoreboard extends uvm_scoreboard;
 		`uvm_info("Scoreboard",$sformatf("x_frc=%0h, y_frc=%0h, z_frc=%0h",
 		x_frc,y_frc,z_mnt),UVM_HIGH);
 		// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-		
-		if (int_exp >= 255)begin // Overflow flag and expected values
+	
+		ovr_f = (( &x_exp)&(~|x_frc) | ( &y_exp)&(~|y_frc)) ? 1 : 0;
+		udr_f = ((~|x_exp)&(~|x_frc) | (~|y_exp)&(~|y_frc)) ? 1 : 0;
+		nan_f = (( &x_exp)&(~|x_frc) & (~|y_exp)&(~|y_frc)) ? 1 : 0;
+		nan_f = (nan_f | (&y_exp)&(~|y_frc)&(~|x_exp)&(~|x_frc)) ? 1 : 0;
+		nan_f = (nan_f | (&x_exp)&(&(x_frc ~^ 23'h400000))) ? 1 : 0;
+		nan_f = (nan_f | (&y_exp)&(&(y_frc ~^ 23'h400000))) ? 1 : 0;
+
+		if ((ovr_f) || (int_exp >= 255))begin // If X == inf or Y == inf or z_exp greater than 255
 			z_exp = 8'hFF;
 			z_mnt = 23'h000000;
 			ovr_f = 1;
 		end
-		if (int_exp <= 0)begin // Underflow flag and expected values
+		if ((udr_f) || (int_exp <= 0))begin // If X == 0 or Y == 0 or z_exp less than 0
 			z_exp = 8'h00;
 			z_mnt = 23'h000000;
-			udr_f = 1;
+			udr_f = 1;	
 		end
-		if (~|x_exp)begin // If X == 0, turn on underflow flow
-			z_exp = 8'h00;
-			z_mnt = 23'h000000;
-			udr_f = 1;
-		end
-		if (~|y_exp)begin // If Y == 0, turn on underflow flag
-			z_exp = 8'h00;
-			z_mnt = 23'h000000;
-			udr_f = 1;
-		end
-		if (&x_exp)begin // If X == inf, turn on overflow flag
+		if (nan_f) begin // If NaN == 1
 			z_exp = 8'hFF;
-			z_mnt = 23'h000000;
-			ovr_f = 1;
-		end
-		if (&y_exp)begin // If Y == inf, turn on overflow flag
-			z_exp = 8'hFF;
-			z_mnt = 23'h000000;
-			ovr_f = 1;
+			z_mnt = 23'h400000;
+			//ovr_f = 0;
+			//udr_f = 0;
 		end
 		
 		merge_out = (z_sgn << 31) | (z_exp << 23) | (z_mnt) ;
@@ -151,23 +145,26 @@ class scoreboard extends uvm_scoreboard;
 			itm.fp_Z, merge_out,z_exp))
 		end
 
-		ovrf_assert:
-		assert (itm.ovrf ~^ ovr_f) // Overflow assert
-		else `uvm_error("Scoreboard",$sformatf("ovrf=%0d, expected ovrf=%0d",itm.ovrf,ovr_f))
+		ovrf_assert: // Overflow assert
+		assert (itm.ovrf ~^ ovr_f)
+		else `uvm_error("Scoreboard",$sformatf("nan=%0d, ovrf=%0d, expected ovrf=%0d",nan_f,itm.ovrf,ovr_f))
 		
-		udrf_assert:
-		assert (itm.udrf ~^ udr_f) // Underflow assert
+		udrf_assert: // Underflow assert
+		assert (itm.udrf ~^ udr_f)
 		else `uvm_error("Scoreboard",$sformatf("udrf=%0d, expected udrf=%0d",itm.udrf,udr_f))
-	
+		
+		nan_assert: // Not a number assert
+		assert (nan_f ~^ ((&z_exp) & (&(z_mnt ~^ 23'h400000))))
+		else `uvm_error("Scoreboard",$sformatf("expected NaN=%0d",nan_f))
 		
 		// Report
-		str_x.bintoa(itm.fp_X);		// Get the string of X 
-		str_y.bintoa(itm.fp_Y);		// Get the srring of Y
-		str_r.bintoa(itm.r_mode);	// Get the string of the rounding mode
-		str_o.bintoa(itm.ovrf);		// Get the string of the overflow
-		str_u.bintoa(itm.udrf);		// Get the string of the underflow
-		str_z.bintoa(itm.fp_Z);		// Get the string of Z
-		str_e.bintoa(merge_out);	// Get the string of expected out
+		str_x.hextoa(itm.fp_X);		// Get the string of X 
+		str_y.hextoa(itm.fp_Y);		// Get the srring of Y
+		str_r.hextoa(itm.r_mode);	// Get the string of the rounding mode
+		str_o.hextoa(itm.ovrf);		// Get the string of the overflow
+		str_u.hextoa(itm.udrf);		// Get the string of the underflow
+		str_z.hextoa(itm.fp_Z);		// Get the string of Z
+		str_e.hextoa(merge_out);	// Get the string of expected out
 		line = {str_x,",",str_y,",",str_r,",",str_o,",",str_u,",",str_z,",",str_e};
 		$system($sformatf("echo %0s >> report.csv",line));
 	endfunction

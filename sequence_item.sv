@@ -34,8 +34,10 @@ class item extends uvm_sequence_item;
 	// Rounding mode	
 	constraint c_rounding {r_mode inside{3'b000,3'b001,3'b010,3'b011,3'b100};}
 	
-	// Constraint between overflow and underflow 
-	constraint c_between {fp_X[30:23] + fp_Y[30:23] > 126; fp_X[30:23] + fp_Y[30:23] - 127 < 255;}
+	// Specific values
+	constraint c_specific {
+	fp_X inside {32'h00000000,32'h80000000,32'hFFFFFFFF,32'h7FFFFFFF,32'h7FC00000,32'hFFC00000,32'h55555555,32'hAAAAAAAA};
+	fp_Y inside {32'h00000000,32'h80000000,32'hFFFFFFFF,32'h7FFFFFFF,32'h7FC00000,32'hFFC00000,32'h55555555,32'hAAAAAAAA};}
 	
 	// Constraint for overflow
 	constraint c_overflow {fp_X[30:23] + fp_Y[30:23]  >= 382;}
@@ -44,5 +46,8 @@ class item extends uvm_sequence_item;
 	constraint c_underflow {fp_X[30:23]  + fp_Y[30:23] <= 126;}
 
 	// Constraint for NaN
-	//constraint c_nan {&fp_X[30:23]}
+	constraint c_nan {(&fp_X[30:22])&(~|fp_X[21:0]) | (&fp_Y[30:22])&(~|fp_Y[21:0]);}
+	
+	// Constraint between overflow and underflow 
+	constraint c_between {fp_X[30:23] + fp_Y[30:23] > 126; fp_X[30:23] + fp_Y[30:23] < 382;}
 endclass

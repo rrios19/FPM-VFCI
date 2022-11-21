@@ -14,7 +14,8 @@ class test extends uvm_test;
 	
 	environment env_inst;
 
-	seq_between	seq;
+	seq_default	s_def;
+
 	virtual dut_if  vif;
 
 	virtual function void build_phase(uvm_phase phase);
@@ -25,8 +26,31 @@ class test extends uvm_test;
 			`uvm_fatal("Test","Could not get vif")
 		uvm_config_db#(virtual dut_if)::set(this,"env_inst.agn_inst.*","dut_vif",vif);
 		
-		seq = seq_between::type_id::create("seq");
-		seq.randomize() with {num inside{[10:20]};};
+		s_def = seq_default::type_id::create("s_def");
+		s_def.randomize() with {num inside{[50:60]};};
+	endfunction
+
+	virtual task run_phase(uvm_phase phase);
+		report();
+		phase.raise_objection(this);
+		s_def.start(env_inst.agn_inst.seq_inst);
+		phase.drop_objection(this);
+	endtask
+endclass
+
+// One specific test, used for test values and debug
+class test_debug extends test;
+	`uvm_component_utils(test_debug); // Register at the factory
+
+	function new(string name = "test_debug", uvm_component parent=null); // Builder
+		super.new(name,parent);
+	endfunction
+	
+	seq_debug 	seq;
+	
+	virtual function void build_phase(uvm_phase phase);
+		super.build_phase(phase);
+		seq = seq_debug::type_id::create("seq");
 	endfunction
 
 	virtual task run_phase(uvm_phase phase);
@@ -36,7 +60,7 @@ class test extends uvm_test;
 	endtask
 endclass
 
-// Specific test, used for test values and debug
+// Specific test, used for alternate values and corner values
 class test_specific extends test;
 	`uvm_component_utils(test_specific); // Register at the factory
 
@@ -45,13 +69,15 @@ class test_specific extends test;
 	endfunction
 	
 	seq_specific 	seq;
-	
+
 	virtual function void build_phase(uvm_phase phase);
 		super.build_phase(phase);
 		seq = seq_specific::type_id::create("seq");
+		seq.randomize() with {num inside{[50:60]};};
 	endfunction
 
 	virtual task run_phase(uvm_phase phase);
+		report();
 		phase.raise_objection(this);
 		seq.start(env_inst.agn_inst.seq_inst);
 		phase.drop_objection(this);
@@ -71,7 +97,7 @@ class test_over extends test;
 	virtual function void build_phase(uvm_phase phase);
 		super.build_phase(phase);
 		seq = seq_over::type_id::create("seq");
-		seq.randomize() with {num inside{[30:50]};};
+		seq.randomize() with {num inside{[50:60]};};
 	endfunction
 
 	virtual task run_phase(uvm_phase phase);
@@ -95,7 +121,55 @@ class test_under extends test;
 	virtual function void build_phase(uvm_phase phase);
 		super.build_phase(phase);
 		seq = seq_under::type_id::create("seq");
-		seq.randomize() with {num inside{[30:50]};};
+		seq.randomize() with {num inside{[50:60]};};
+	endfunction
+
+	virtual task run_phase(uvm_phase phase);
+		report();
+		phase.raise_objection(this);
+		seq.start(env_inst.agn_inst.seq_inst);
+		phase.drop_objection(this);
+	endtask
+endclass
+
+// Not a number test, X is NaN or Y is NaN or both
+class test_nan extends test;
+	`uvm_component_utils(test_nan); // Register at the factory
+
+	function new(string name = "test_nan", uvm_component parent=null); // Builder
+		super.new(name,parent);
+	endfunction
+	
+	seq_nan 	seq;
+
+	virtual function void build_phase(uvm_phase phase);
+		super.build_phase(phase);
+		seq = seq_nan::type_id::create("seq");
+		seq.randomize() with {num inside{[50:60]};};
+	endfunction
+
+	virtual task run_phase(uvm_phase phase);
+		report();
+		phase.raise_objection(this);
+		seq.start(env_inst.agn_inst.seq_inst);
+		phase.drop_objection(this);
+	endtask
+endclass
+
+// Between test
+class test_between extends test;
+	`uvm_component_utils(test_between); // Register at the factory
+
+	function new(string name = "test_between", uvm_component parent=null); // Builder
+		super.new(name,parent);
+	endfunction
+	
+	seq_between 	seq;
+
+	virtual function void build_phase(uvm_phase phase);
+		super.build_phase(phase);
+		seq = seq_between::type_id::create("seq");
+		seq.randomize() with {num inside{[50:60]};};
 	endfunction
 
 	virtual task run_phase(uvm_phase phase);
