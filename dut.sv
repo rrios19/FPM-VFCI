@@ -742,8 +742,8 @@ module EXC(
   assign inf_Y = &exp_Y & ~|frc_Y;
   assign inf = inf_X | inf_Y | ovrf;
   
-  assign zer_X = ~|exp_X;
-  assign zer_Y = ~|exp_Y;
+  assign zer_X = (~|exp_X)&(~|frc_X); // Bug, wrong validation of zero
+  assign zer_Y = (~|exp_Y)&(~|frc_Y); // Bug, wrong validation of zero
   assign zer = zer_X | zer_Y | udrf;
   
   assign nan_X = &exp_X & frc_X[22] & (~|frc_X[21:0]); // Bug, wrong interpretation between infinity and NaN
