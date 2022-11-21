@@ -7,7 +7,7 @@ vcs -Mupdate report.cpp testbench.sv -o salida -full64 -debug_acc+all -debug_reg
 #./salida +UVM_VERBOSITY=UVM_HIGH +UVM_TESTNAME=test_debug +ntb_random_seed=1 -gui;
 
 ######### Default test ############################################################
-./salida +UVM_VERBOSITY=UVM_LOW +UVM_TESTNAME=test +ntb_random_seed=16;
+#./salida +UVM_VERBOSITY=UVM_LOW +UVM_TESTNAME=test +ntb_random_seed=16;
 ######### Specific test ###########################################################
 ./salida +UVM_VERBOSITY=UVM_LOW +UVM_TESTNAME=test_specific +ntb_random_seed=1;
 ./salida +UVM_VERBOSITY=UVM_LOW +UVM_TESTNAME=test_specific +ntb_random_seed=2;

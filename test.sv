@@ -15,6 +15,11 @@ class test extends uvm_test;
 	environment env_inst;
 
 	seq_default	s_def;
+	seq_specific	s_spe;
+	seq_over	s_ove;
+	seq_under	s_und;
+	seq_nan		s_nan;
+	seq_between	s_bet;
 
 	virtual dut_if  vif;
 
@@ -27,13 +32,28 @@ class test extends uvm_test;
 		uvm_config_db#(virtual dut_if)::set(this,"env_inst.agn_inst.*","dut_vif",vif);
 		
 		s_def = seq_default::type_id::create("s_def");
+		s_spe = seq_specific::type_id::create("s_spe");
+		s_ove = seq_over::type_id::create("s_ove");
+		s_und = seq_under::type_id::create("s_und");
+		s_nan = seq_nan::type_id::create("s_nan");
+		s_bet = seq_between::type_id::create("s_bet");
 		s_def.randomize() with {num inside{[50:60]};};
+		s_spe.randomize() with {num inside{[50:60]};};
+		s_ove.randomize() with {num inside{[50:60]};};
+		s_und.randomize() with {num inside{[50:60]};};
+		s_nan.randomize() with {num inside{[50:60]};};
+		s_bet.randomize() with {num inside{[50:60]};};
 	endfunction
 
 	virtual task run_phase(uvm_phase phase);
 		report();
 		phase.raise_objection(this);
 		s_def.start(env_inst.agn_inst.seq_inst);
+		s_spe.start(env_inst.agn_inst.seq_inst);
+		s_ove.start(env_inst.agn_inst.seq_inst);
+		s_und.start(env_inst.agn_inst.seq_inst);
+		s_nan.start(env_inst.agn_inst.seq_inst);
+		s_bet.start(env_inst.agn_inst.seq_inst);
 		phase.drop_objection(this);
 	endtask
 endclass
