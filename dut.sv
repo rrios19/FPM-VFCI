@@ -748,7 +748,7 @@ module EXC(
   
   assign nan_X = &exp_X & frc_X[22] & (~|frc_X[21:0]); // Bug, wrong interpretation between infinity and NaN
   assign nan_Y = &exp_Y & frc_Y[22] & (~|frc_Y[21:0]); // Bug, wrong interpretation between infinity and NaN
-  assign nan_Z = {&exp_X & zer_Y} | {&exp_Y & zer_X};
+  assign nan_Z = (inf_X & zer_Y) | (inf_Y & zer_X); // Bug, wrong validation of inf
   assign nan = nan_X | nan_Y | nan_Z;
   
 endmodule
