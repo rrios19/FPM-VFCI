@@ -779,14 +779,14 @@ module FPM(
   input [2:0]r_mode,
   input [31:0]fp_X, fp_Y,
   output [31:0]fp_Z,
-  output ovrf, udrf);
+  output inf, zer); // Bug, wrong connection
   
   wire [31:0]z;
   
   wire [22:0]frc_X, frc_Y;
   wire [7:0]exp_X, exp_Y, exp_Z;
   
-  wire nan, inf, zer;
+  wire nan, ovrf, udrf; // Bug, wrong connection
   wire norm_n, norm_r;
   wire sign_Z;
   
@@ -856,7 +856,7 @@ module top(
           .fp_Y(fp_Y),
           
           .fp_Z(fp_Z),
-          .ovrf(ovrf),
-          .udrf(udrf));
+          .inf(ovrf),  // Bug, wrong connection
+          .zer(udrf)); // Bug, wrong connection
   
 endmodule
