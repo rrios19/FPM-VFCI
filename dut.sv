@@ -757,8 +757,9 @@ module NET(
   input nan, inf, zer,
   input [31:0]Z,
   output [31:0]fp_Z);
-  
-  assign fp_Z = nan ? 32'h7fc00000 : (inf ? {Z[31], 8'hff, 23'b0} : (zer ? {Z[31], 8'h00, 23'b0} : Z));
+ 
+  // Bug, DUT only returns a positive +NaN, what happened with the negative -NaN? 
+  assign fp_Z = nan ? {Z[31],31'h7FC00000} : (inf ? {Z[31], 8'hff, 23'b0} : (zer ? {Z[31], 8'h00, 23'b0} : Z));
   
   /*always @(posedge clk)begin
     if(nan)
