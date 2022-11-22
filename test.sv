@@ -13,7 +13,7 @@ class test extends uvm_test;
 	endfunction
 	
 	environment env_inst;
-
+	
 	seq_default	s_def;
 	seq_specific	s_spe;
 	seq_over	s_ove;
@@ -37,12 +37,12 @@ class test extends uvm_test;
 		s_und = seq_under::type_id::create("s_und");
 		s_nan = seq_nan::type_id::create("s_nan");
 		s_bet = seq_between::type_id::create("s_bet");
-		s_def.randomize() with {num inside{[50:60]};};
-		s_spe.randomize() with {num inside{[50:60]};};
-		s_ove.randomize() with {num inside{[50:60]};};
-		s_und.randomize() with {num inside{[50:60]};};
-		s_nan.randomize() with {num inside{[50:60]};};
-		s_bet.randomize() with {num inside{[50:60]};};
+		s_def.randomize() with {num inside{[30:40]};};
+		s_spe.randomize() with {num inside{[30:40]};};
+		s_ove.randomize() with {num inside{[30:40]};};
+		s_und.randomize() with {num inside{[30:40]};};
+		s_nan.randomize() with {num inside{[30:40]};};
+		s_bet.randomize() with {num inside{[30:40]};};
 	endfunction
 
 	virtual task run_phase(uvm_phase phase);
@@ -66,16 +66,16 @@ class test_debug extends test;
 		super.new(name,parent);
 	endfunction
 	
-	seq_debug 	seq;
+	seq_debug 	s_deb;
 	
 	virtual function void build_phase(uvm_phase phase);
 		super.build_phase(phase);
-		seq = seq_debug::type_id::create("seq");
+		s_deb = seq_debug::type_id::create("s_deb");
 	endfunction
 
 	virtual task run_phase(uvm_phase phase);
 		phase.raise_objection(this);
-		seq.start(env_inst.agn_inst.seq_inst);
+		s_deb.start(env_inst.agn_inst.seq_inst);
 		phase.drop_objection(this);
 	endtask
 endclass
@@ -88,18 +88,15 @@ class test_specific extends test;
 		super.new(name,parent);
 	endfunction
 	
-	seq_specific 	seq;
-
 	virtual function void build_phase(uvm_phase phase);
 		super.build_phase(phase);
-		seq = seq_specific::type_id::create("seq");
-		seq.randomize() with {num inside{[50:60]};};
+		s_spe.randomize() with {num inside{[10:20]};};
 	endfunction
 
 	virtual task run_phase(uvm_phase phase);
 		report();
 		phase.raise_objection(this);
-		seq.start(env_inst.agn_inst.seq_inst);
+		s_spe.start(env_inst.agn_inst.seq_inst);
 		phase.drop_objection(this);
 	endtask
 endclass
@@ -111,19 +108,16 @@ class test_over extends test;
 	function new(string name = "test_over", uvm_component parent=null); // Builder
 		super.new(name,parent);
 	endfunction
-	
-	seq_over 	seq;
 
 	virtual function void build_phase(uvm_phase phase);
 		super.build_phase(phase);
-		seq = seq_over::type_id::create("seq");
-		seq.randomize() with {num inside{[50:60]};};
+		s_ove.randomize() with {num inside{[10:20]};};
 	endfunction
 
 	virtual task run_phase(uvm_phase phase);
 		report();
 		phase.raise_objection(this);
-		seq.start(env_inst.agn_inst.seq_inst);
+		s_ove.start(env_inst.agn_inst.seq_inst);
 		phase.drop_objection(this);
 	endtask
 endclass
@@ -136,18 +130,15 @@ class test_under extends test;
 		super.new(name,parent);
 	endfunction
 	
-	seq_under 	seq;
-
 	virtual function void build_phase(uvm_phase phase);
 		super.build_phase(phase);
-		seq = seq_under::type_id::create("seq");
-		seq.randomize() with {num inside{[50:60]};};
+		s_und.randomize() with {num inside{[10:20]};};
 	endfunction
 
 	virtual task run_phase(uvm_phase phase);
 		report();
 		phase.raise_objection(this);
-		seq.start(env_inst.agn_inst.seq_inst);
+		s_und.start(env_inst.agn_inst.seq_inst);
 		phase.drop_objection(this);
 	endtask
 endclass
@@ -159,19 +150,16 @@ class test_nan extends test;
 	function new(string name = "test_nan", uvm_component parent=null); // Builder
 		super.new(name,parent);
 	endfunction
-	
-	seq_nan 	seq;
 
 	virtual function void build_phase(uvm_phase phase);
 		super.build_phase(phase);
-		seq = seq_nan::type_id::create("seq");
-		seq.randomize() with {num inside{[50:60]};};
+		s_nan.randomize() with {num inside{[10:20]};};
 	endfunction
 
 	virtual task run_phase(uvm_phase phase);
 		report();
 		phase.raise_objection(this);
-		seq.start(env_inst.agn_inst.seq_inst);
+		s_nan.start(env_inst.agn_inst.seq_inst);
 		phase.drop_objection(this);
 	endtask
 endclass
@@ -183,19 +171,16 @@ class test_between extends test;
 	function new(string name = "test_between", uvm_component parent=null); // Builder
 		super.new(name,parent);
 	endfunction
-	
-	seq_between 	seq;
 
 	virtual function void build_phase(uvm_phase phase);
 		super.build_phase(phase);
-		seq = seq_between::type_id::create("seq");
-		seq.randomize() with {num inside{[50:60]};};
+		s_bet.randomize() with {num inside{[10:20]};};
 	endfunction
 
 	virtual task run_phase(uvm_phase phase);
 		report();
 		phase.raise_objection(this);
-		seq.start(env_inst.agn_inst.seq_inst);
+		s_bet.start(env_inst.agn_inst.seq_inst);
 		phase.drop_objection(this);
 	endtask
 endclass
